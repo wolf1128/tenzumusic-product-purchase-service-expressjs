@@ -2,6 +2,17 @@ import { database } from '../startup/db';
 import uniqid from 'uniqid';
 import bcrypt from 'bcryptjs';
 
+export interface IUser {
+	ID: string;
+	First_name: string;
+	Last_name: string;
+	Email: string;
+	Password: string;
+	Age: number;
+	Purchased_products: [string];
+}
+
+
 export const createUser = async (
 	fName: string,
 	lName: string,
@@ -39,15 +50,39 @@ export const createUser = async (
 export const findUser = (id: string, password: string, callback: any) => {
 	const sql = `SELECT * FROM USERS WHERE ID = $id`;
 
-    // check passwords
-    // await bcrypt.compare(password)
-
+	// check passwords
+	// await bcrypt.compare(password)
 
 	database.get(sql, [id], (error, row) => {
 		if (error) {
 			callback(error.message);
 		}
-        row.Password = '****';
+		row.Password = '****';
 		callback(row);
+	});
+};
+
+export const findUserById = (id: string, callback: any) => {
+	const sql = `SELECT * FROM USERS WHERE ID = $id`;
+
+	database.get(sql, [id], (error, row) => {
+		if (error) {
+			callback(error.message);
+		}
+		callback(row);
+	});
+};
+
+export const updateUserPurchasedProducts = (
+	user: string,
+	newPurchasedProducts: string,
+	callback: any
+) => {
+	const sql = `UPDATE USERS SET Purchased_products=$newPurchasedProducts WHERE ID=$user`;
+	database.run(sql, [newPurchasedProducts, user], (error: any, row: any) => {
+		if (error) {
+			callback(error.message);
+		}
+		callback();
 	});
 };

@@ -1,6 +1,14 @@
 import { database } from '../startup/db';
 import uniqid from 'uniqid';
 
+export interface IProduct {
+	ID: string;
+	Name: string;
+	Stock: number;
+	Price: number;
+	Date: string;
+}
+
 export const addProduct = async (
 	name: string,
 	stock: number,
@@ -22,7 +30,7 @@ export const addProduct = async (
 	});
 };
 
-export const findProduct = async (id: string, callback: any) => {
+export const findProduct = (id: string, callback: any) => {
 	const sql = `SELECT * FROM PRODUCTS WHERE ID = $id`;
 	database.get(sql, [id], (error, row) => {
 		if (error) {
@@ -32,7 +40,7 @@ export const findProduct = async (id: string, callback: any) => {
 	});
 };
 
-export const findAllProductsAndFilter = async (
+export const findAllProductsAndFilter = (
 	minPrice: number,
 	maxPrice: number,
 	callback: any
@@ -70,4 +78,18 @@ export const findAllProductsAndFilter = async (
 			callback(row);
 		});
 	}
+};
+
+export const updateProductStock = (
+	product: string,
+	newStock: number,
+	callback: any
+) => {
+	const sql = `UPDATE PRODUCTS SET Stock=$newStock WHERE ID=$product`;
+	database.run(sql, [newStock, product], (error: any) => {
+		if (error) {
+			callback(error.message);
+		}
+		callback();
+	});
 };

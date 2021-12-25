@@ -36,8 +36,9 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getProducts = exports.getProduct = exports.createProduct = void 0;
-var ProductModel_1 = require("../models/ProductModel");
+exports.purchaseProduct = exports.getProducts = exports.getProduct = exports.createProduct = void 0;
+var productModel_1 = require("../models/productModel");
+var userModel_1 = require("../models/userModel");
 // @desc        Create a new product
 // @route       POST /api/products
 // @access      Public
@@ -46,7 +47,7 @@ var createProduct = function (req, res) { return __awaiter(void 0, void 0, void 
     return __generator(this, function (_b) {
         _a = req.body, Name = _a.Name, Stock = _a.Stock, Price = _a.Price;
         // Store in the databse
-        ProductModel_1.addProduct(Name, Stock, Price, function (result) {
+        productModel_1.addProduct(Name, Stock, Price, function (result) {
             res.send(result);
         });
         return [2 /*return*/];
@@ -58,7 +59,7 @@ exports.createProduct = createProduct;
 // @access      Public
 var getProduct = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        ProductModel_1.findProduct(req.params.id, function (result) {
+        productModel_1.findProduct(req.params.id, function (result) {
             res.send(result);
         });
         return [2 /*return*/];
@@ -72,10 +73,64 @@ var getProducts = function (req, res) { return __awaiter(void 0, void 0, void 0,
     var _a, minPrice, maxPrice;
     return __generator(this, function (_b) {
         _a = req.query, minPrice = _a.minPrice, maxPrice = _a.maxPrice;
-        ProductModel_1.findAllProductsAndFilter(parseInt(minPrice), parseInt(maxPrice), function (result) {
+        productModel_1.findAllProductsAndFilter(parseInt(minPrice), parseInt(maxPrice), function (result) {
             res.send(result);
         });
         return [2 /*return*/];
     });
 }); };
 exports.getProducts = getProducts;
+// @desc        Purchase product
+// @route       PUT /api/products/purchase
+// @access      Public
+var purchaseProduct = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, user, product, count, totalPrice;
+    return __generator(this, function (_b) {
+        _a = req.body, user = _a.user, product = _a.product, count = _a.count;
+        productModel_1.findProduct(product, function (productInfo) {
+            if (productInfo.Stock < count) {
+                res.status(500).send({
+                    message_fa: 'متاسفیم!تعداد درخواست بیشتر از موجودی است!',
+                    message_en: 'Sorry! Order count is greather than the stock!',
+                });
+            }
+            else {
+                var newStock = productInfo.Stock - count;
+                totalPrice = productInfo.Price * count;
+                productModel_1.updateProductStock(product, newStock, function (err) {
+                    // console.log('error: ', err);
+                });
+                userModel_1.findUserById(user, function (foundUser) {
+                    var userProducts = !foundUser.Purchased_products
+                        ? null
+                        : foundUser.Purchased_products;
+                    // Convert string to array (SQLite constraint) | ['1234', '567', '89']
+                    var purchasedProducts = [];
+                    if (userProducts) {
+                        // purchasedProducts = Array.from(userProducts).filter( // xxx
+                        // 	(p) => p !== ','
+                        // );
+                        purchasedProducts = userProducts
+                            .split("'")
+                            .filter(function (p) { return p !== '[' && p !== ']' && p !== ', '; });
+                        purchasedProducts.push(productInfo.ID);
+                    }
+                    else {
+                        purchasedProducts = Array(productInfo.ID);
+                    }
+                    // Convert back to string
+                    var updatedPurchasedProducts = purchasedProducts.toString();
+                    userModel_1.updateUserPurchasedProducts(user, updatedPurchasedProducts, function (result) {
+                        res.send({
+                            successMessage_fa: 'با تشکر از خرید شما!',
+                            successMessage_en: 'Thanks for purchasing from us!',
+                            totalPrice: totalPrice,
+                        });
+                    });
+                });
+            }
+        });
+        return [2 /*return*/];
+    });
+}); };
+exports.purchaseProduct = purchaseProduct;

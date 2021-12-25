@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findUser = exports.createUser = void 0;
+exports.updateUserPurchasedProducts = exports.findUserById = exports.findUser = exports.createUser = void 0;
 var db_1 = require("../startup/db");
 var uniqid_1 = __importDefault(require("uniqid"));
 var bcryptjs_1 = __importDefault(require("bcryptjs"));
@@ -81,3 +81,23 @@ var findUser = function (id, password, callback) {
     });
 };
 exports.findUser = findUser;
+var findUserById = function (id, callback) {
+    var sql = "SELECT * FROM USERS WHERE ID = $id";
+    db_1.database.get(sql, [id], function (error, row) {
+        if (error) {
+            callback(error.message);
+        }
+        callback(row);
+    });
+};
+exports.findUserById = findUserById;
+var updateUserPurchasedProducts = function (user, newPurchasedProducts, callback) {
+    var sql = "UPDATE USERS SET Purchased_products=$newPurchasedProducts WHERE ID=$user";
+    db_1.database.run(sql, [newPurchasedProducts, user], function (error, row) {
+        if (error) {
+            callback(error.message);
+        }
+        callback();
+    });
+};
+exports.updateUserPurchasedProducts = updateUserPurchasedProducts;
