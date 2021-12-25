@@ -22,12 +22,32 @@ export const createUser = async (
 
 	const sql = `INSERT INTO USERS 
                     (ID, First_name, Last_name, Email, Password, Age, Purchased_products) 
-                    VALUES ($id, $fName, $lName, $email, $password, $age, '')`;
-	database.run(sql, [id, fName, lName, email, hashedPassword, decimalAge], (error: any) => {
+                    VALUES ($id, $fName, $lName, $email, $password, $age, null)`;
+	database.run(
+		sql,
+		[id, fName, lName, email, hashedPassword, decimalAge],
+		(error: any) => {
+			if (error) {
+				callback(error.message);
+			}
+			const message = 'The user has been created successfully.';
+			callback(message);
+		}
+	);
+};
+
+export const getUserInfo = (id: string, password: string, callback: any) => {
+	const sql = `SELECT * FROM USERS WHERE ID = $id`;
+
+    // check passwords
+    // await bcrypt.compare(password)
+
+
+	database.get(sql, [id], (error, row) => {
 		if (error) {
 			callback(error.message);
 		}
-		const message = 'The user has been created successfully.';
-		callback(message);
+        row.Password = '****';
+		callback(row);
 	});
 };

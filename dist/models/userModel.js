@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createUser = void 0;
+exports.getUserInfo = exports.createUser = void 0;
 var db_1 = require("../startup/db");
 var uniqid_1 = __importDefault(require("uniqid"));
 var bcryptjs_1 = __importDefault(require("bcryptjs"));
@@ -55,7 +55,7 @@ var createUser = function (fName, lName, email, password, age, callback) { retur
                 hashedPassword = _a.sent();
                 decimalAge = new Date().getFullYear() - new Date(age).getFullYear();
                 id = uniqid_1.default();
-                sql = "INSERT INTO USERS \n                    (ID, First_name, Last_name, Email, Password, Age, Purchased_products) \n                    VALUES ($id, $fName, $lName, $email, $password, $age, '')";
+                sql = "INSERT INTO USERS \n                    (ID, First_name, Last_name, Email, Password, Age, Purchased_products) \n                    VALUES ($id, $fName, $lName, $email, $password, $age, null)";
                 db_1.database.run(sql, [id, fName, lName, email, hashedPassword, decimalAge], function (error) {
                     if (error) {
                         callback(error.message);
@@ -68,3 +68,16 @@ var createUser = function (fName, lName, email, password, age, callback) { retur
     });
 }); };
 exports.createUser = createUser;
+var getUserInfo = function (id, password, callback) {
+    var sql = "SELECT * FROM USERS WHERE ID = $id";
+    // check passwords
+    // await bcrypt.compare(password)
+    db_1.database.get(sql, [id], function (error, row) {
+        if (error) {
+            callback(error.message);
+        }
+        row.Password = '****';
+        callback(row);
+    });
+};
+exports.getUserInfo = getUserInfo;

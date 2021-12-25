@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.registerUser = void 0;
+exports.getUser = exports.registerUser = void 0;
 var userModel_1 = require("../models/userModel");
 // @desc        Register a new user
 // @route       POST /api/users
@@ -53,3 +53,17 @@ var registerUser = function (req, res, next) { return __awaiter(void 0, void 0, 
     });
 }); };
 exports.registerUser = registerUser;
+// @desc        Get user info
+// @route       POST /api/users/info
+// @access      Public
+var getUser = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, ID, Password;
+    return __generator(this, function (_b) {
+        _a = req.body, ID = _a.ID, Password = _a.Password;
+        userModel_1.getUserInfo(ID, Password, function (result) {
+            res.send(result);
+        });
+        return [2 /*return*/];
+    });
+}); };
+exports.getUser = getUser;
