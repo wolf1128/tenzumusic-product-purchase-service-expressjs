@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addProduct = void 0;
+exports.findAllProductsAndFilter = exports.findProduct = exports.addProduct = void 0;
 var db_1 = require("../startup/db");
 var uniqid_1 = __importDefault(require("uniqid"));
 var addProduct = function (name, stock, price, callback) { return __awaiter(void 0, void 0, void 0, function () {
@@ -59,3 +59,60 @@ var addProduct = function (name, stock, price, callback) { return __awaiter(void
     });
 }); };
 exports.addProduct = addProduct;
+var findProduct = function (id, callback) { return __awaiter(void 0, void 0, void 0, function () {
+    var sql;
+    return __generator(this, function (_a) {
+        sql = "SELECT * FROM PRODUCTS WHERE ID = $id";
+        db_1.database.get(sql, [id], function (error, row) {
+            if (error) {
+                callback(error.message);
+            }
+            callback(row);
+        });
+        return [2 /*return*/];
+    });
+}); };
+exports.findProduct = findProduct;
+var findAllProductsAndFilter = function (minPrice, maxPrice, callback) { return __awaiter(void 0, void 0, void 0, function () {
+    var sql, sql, sql, sql;
+    return __generator(this, function (_a) {
+        if (minPrice & maxPrice) {
+            sql = "SELECT * FROM PRODUCTS WHERE Price BETWEEN $minPrice AND $maxPrice";
+            db_1.database.all(sql, [minPrice, maxPrice], function (error, row) {
+                if (error) {
+                    callback(error.message);
+                }
+                callback(row);
+            });
+        }
+        else if (minPrice) {
+            sql = "SELECT * FROM PRODUCTS WHERE Price >= $minPrice";
+            db_1.database.all(sql, [minPrice], function (error, row) {
+                if (error) {
+                    callback(error.message);
+                }
+                callback(row);
+            });
+        }
+        else if (maxPrice) {
+            sql = "SELECT * FROM PRODUCTS WHERE Price <= $maxPrice";
+            db_1.database.all(sql, [maxPrice], function (error, row) {
+                if (error) {
+                    callback(error.message);
+                }
+                callback(row);
+            });
+        }
+        else {
+            sql = "SELECT * FROM PRODUCTS";
+            db_1.database.all(sql, [], function (error, row) {
+                if (error) {
+                    callback(error.message);
+                }
+                callback(row);
+            });
+        }
+        return [2 /*return*/];
+    });
+}); };
+exports.findAllProductsAndFilter = findAllProductsAndFilter;

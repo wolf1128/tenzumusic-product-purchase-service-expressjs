@@ -36,7 +36,7 @@ export const createUser = async (
 	);
 };
 
-export const getUserInfo = (id: string, password: string, callback: any) => {
+export const findUser = (id: string, password: string, callback: any) => {
 	const sql = `SELECT * FROM USERS WHERE ID = $id`;
 
     // check passwords

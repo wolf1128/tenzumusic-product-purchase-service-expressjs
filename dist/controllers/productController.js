@@ -36,12 +36,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createProduct = void 0;
+exports.getProducts = exports.getProduct = exports.createProduct = void 0;
 var ProductModel_1 = require("../models/ProductModel");
 // @desc        Create a new product
 // @route       POST /api/products
 // @access      Public
-var createProduct = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+var createProduct = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, Name, Stock, Price;
     return __generator(this, function (_b) {
         _a = req.body, Name = _a.Name, Stock = _a.Stock, Price = _a.Price;
@@ -53,3 +53,29 @@ var createProduct = function (req, res, next) { return __awaiter(void 0, void 0,
     });
 }); };
 exports.createProduct = createProduct;
+// @desc        Get product info
+// @route       GET /api/products/:id
+// @access      Public
+var getProduct = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        ProductModel_1.findProduct(req.params.id, function (result) {
+            res.send(result);
+        });
+        return [2 /*return*/];
+    });
+}); };
+exports.getProduct = getProduct;
+// @desc        Get all products info
+// @route       GET /api/products?minPrice=xx&maxPrice=xx
+// @access      Public
+var getProducts = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, minPrice, maxPrice;
+    return __generator(this, function (_b) {
+        _a = req.query, minPrice = _a.minPrice, maxPrice = _a.maxPrice;
+        ProductModel_1.findAllProductsAndFilter(parseInt(minPrice), parseInt(maxPrice), function (result) {
+            res.send(result);
+        });
+        return [2 /*return*/];
+    });
+}); };
+exports.getProducts = getProducts;

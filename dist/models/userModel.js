@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUserInfo = exports.createUser = void 0;
+exports.findUser = exports.createUser = void 0;
 var db_1 = require("../startup/db");
 var uniqid_1 = __importDefault(require("uniqid"));
 var bcryptjs_1 = __importDefault(require("bcryptjs"));
@@ -68,7 +68,7 @@ var createUser = function (fName, lName, email, password, age, callback) { retur
     });
 }); };
 exports.createUser = createUser;
-var getUserInfo = function (id, password, callback) {
+var findUser = function (id, password, callback) {
     var sql = "SELECT * FROM USERS WHERE ID = $id";
     // check passwords
     // await bcrypt.compare(password)
@@ -80,4 +80,4 @@ var getUserInfo = function (id, password, callback) {
         callback(row);
     });
 };
-exports.getUserInfo = getUserInfo;
+exports.findUser = findUser;

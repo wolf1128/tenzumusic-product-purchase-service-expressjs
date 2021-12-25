@@ -41,7 +41,7 @@ var userModel_1 = require("../models/userModel");
 // @desc        Register a new user
 // @route       POST /api/users
 // @access      Public
-var registerUser = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+var registerUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, First_name, Last_name, Email, Password, Age;
     return __generator(this, function (_b) {
         _a = req.body, First_name = _a.First_name, Last_name = _a.Last_name, Email = _a.Email, Password = _a.Password, Age = _a.Age;
@@ -56,11 +56,11 @@ exports.registerUser = registerUser;
 // @desc        Get user info
 // @route       POST /api/users/info
 // @access      Public
-var getUser = function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+var getUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var _a, ID, Password;
     return __generator(this, function (_b) {
         _a = req.body, ID = _a.ID, Password = _a.Password;
-        userModel_1.getUserInfo(ID, Password, function (result) {
+        userModel_1.findUser(ID, Password, function (result) {
             res.send(result);
         });
         return [2 /*return*/];
