@@ -1,0 +1,32 @@
+{
+	"name": "tenzumusic-product-purchase-service-expressjs",
+	"version": "1.0.0",
+	"description": "Product Purchase Service",
+	"main": "server.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"dev": "nodemon dist/server.js",
+		"start": "node dist/server.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+ssh://git@github.com/professordev7/tenzumusic-product-purchase-service-expressjs.git"
+	},
+	"author": "Salar Farahmand",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/professordev7/tenzumusic-product-purchase-service-expressjs/issues"
+	},
+	"homepage": "https://github.com/professordev7/tenzumusic-product-purchase-service-expressjs#readme",
+	"dependencies": {
+		"bcryptjs": "^2.4.3",
+		"dotenv": "^10.0.0",
+		"express": "^4.17.2"
+	},
+	"devDependencies": {
+		"@types/bcryptjs": "^2.4.2",
+		"@types/express": "^4.17.13",
+		"@types/node": "^17.0.4",
+		"nodemon": "^2.0.15"
+	}
+}
