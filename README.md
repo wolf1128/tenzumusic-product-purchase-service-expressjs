@@ -13,4 +13,4 @@ Main objective is to develop a node.js service that handles below operations:
 
 - First, install the dependencies using `npm install`
 - Second, compile your typescript files using `tsc` in the separated cli
-- The service should be started with `npm run start` and listen on port 3000
+- The service should be started with `npm run start` and listen on port 5000
