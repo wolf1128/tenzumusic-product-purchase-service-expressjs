@@ -1,10 +1,18 @@
 import { RequestHandler } from 'express';
-import { createUser, findUser } from '../models/userModel';
+import {
+	createUser,
+	findUser,
+	validateGetUser,
+	validateRegisterUser,
+} from '../models/userModel';
 
 // @desc        Register a new user
 // @route       POST /api/users
 // @access      Public
 export const registerUser: RequestHandler = async (req, res) => {
+	const { error } = validateRegisterUser(req.body);
+	if (error) return res.status(400).send(error.details[0].message);
+
 	const { first_name, last_name, email, password, age } = req.body as {
 		first_name: string;
 		last_name: string;
@@ -23,6 +31,9 @@ export const registerUser: RequestHandler = async (req, res) => {
 // @route       POST /api/users/info
 // @access      Public
 export const getUser: RequestHandler = async (req, res) => {
+	const { error } = validateGetUser(req.body);
+	if (error) return res.status(400).send(error.details[0].message);
+
 	const { id, password } = req.body as { id: string; password: string };
 
 	findUser(id, password, (result: any) => {

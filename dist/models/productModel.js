@@ -39,9 +39,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateProductStock = exports.findAllProductsAndFilter = exports.findProduct = exports.addProduct = void 0;
+exports.validatePurchaseProduct = exports.validateCreateProduct = exports.updateProductStock = exports.findAllProductsAndFilter = exports.findProduct = exports.addProduct = void 0;
 var db_1 = require("../startup/db");
 var uniqid_1 = __importDefault(require("uniqid"));
+var joi_1 = __importDefault(require("joi"));
+// Database Queries
 var addProduct = function (name, stock, price, callback) { return __awaiter(void 0, void 0, void 0, function () {
     var id, date, sql;
     return __generator(this, function (_a) {
@@ -118,3 +120,22 @@ var updateProductStock = function (product, newStock, callback) {
     });
 };
 exports.updateProductStock = updateProductStock;
+// Validations
+function validateCreateProduct(product) {
+    var schema = joi_1.default.object({
+        name: joi_1.default.string().required(),
+        stock: joi_1.default.number().min(0).required(),
+        price: joi_1.default.number().min(0).required(),
+    });
+    return schema.validate(product);
+}
+exports.validateCreateProduct = validateCreateProduct;
+function validatePurchaseProduct(purchaseInfo) {
+    var schema = joi_1.default.object({
+        user: joi_1.default.string().required(),
+        product: joi_1.default.string().required(),
+        count: joi_1.default.number().min(0).required(),
+    });
+    return schema.validate(purchaseInfo);
+}
+exports.validatePurchaseProduct = validatePurchaseProduct;

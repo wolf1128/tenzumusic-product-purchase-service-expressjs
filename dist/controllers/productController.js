@@ -43,8 +43,11 @@ var userModel_1 = require("../models/userModel");
 // @route       POST /api/products
 // @access      Public
 var createProduct = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, name, stock, price;
+    var error, _a, name, stock, price;
     return __generator(this, function (_b) {
+        error = productModel_1.validateCreateProduct(req.body).error;
+        if (error)
+            return [2 /*return*/, res.status(400).send(error.details[0].message)];
         _a = req.body, name = _a.name, stock = _a.stock, price = _a.price;
         // Store in the databses
         productModel_1.addProduct(name, stock, price, function (result) {
@@ -86,8 +89,11 @@ exports.getProducts = getProducts;
 // @route       PUT /api/products/purchase
 // @access      Public
 var purchaseProduct = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, user, product, count, totalPrice;
+    var error, _a, user, product, count, totalPrice;
     return __generator(this, function (_b) {
+        error = productModel_1.validatePurchaseProduct(req.body).error;
+        if (error)
+            return [2 /*return*/, res.status(400).send(error.details[0].message)];
         _a = req.body, user = _a.user, product = _a.product, count = _a.count;
         productModel_1.findProduct(product, function (productInfo) {
             if (productInfo.stock < count) {

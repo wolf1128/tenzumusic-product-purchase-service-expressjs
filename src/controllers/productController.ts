@@ -4,6 +4,8 @@ import {
 	findAllProductsAndFilter,
 	findProduct,
 	updateProductStock,
+	validateCreateProduct,
+	validatePurchaseProduct,
 } from '../models/productModel';
 import {
 	findUser,
@@ -15,6 +17,9 @@ import {
 // @route       POST /api/products
 // @access      Public
 export const createProduct: RequestHandler = async (req, res) => {
+	const { error } = validateCreateProduct(req.body);
+	if (error) return res.status(400).send(error.details[0].message);
+
 	const { name, stock, price } = req.body as {
 		name: string;
 		stock: number;
@@ -65,6 +70,9 @@ export const getProducts: RequestHandler<
 // @route       PUT /api/products/purchase
 // @access      Public
 export const purchaseProduct: RequestHandler = async (req, res) => {
+	const { error } = validatePurchaseProduct(req.body);
+	if (error) return res.status(400).send(error.details[0].message);
+
 	const {
 		user,
 		product,

@@ -1,6 +1,9 @@
 import { database } from '../startup/db';
 import uniqid from 'uniqid';
 import bcrypt from 'bcryptjs';
+import Joi from 'joi';
+
+// Types
 
 export interface IUser {
 	id: string;
@@ -11,6 +14,8 @@ export interface IUser {
 	age: number;
 	purchased_products: [string];
 }
+
+// Database Queries
 
 export const createUser = async (
 	fName: string,
@@ -88,3 +93,26 @@ export const updateUserPurchasedProducts = (
 		callback();
 	});
 };
+
+// Validations
+
+export function validateRegisterUser(user: IUser) {
+	const schema = Joi.object({
+		first_name: Joi.string().required(),
+		last_name: Joi.string().required(),
+		email: Joi.string().email().required(),
+		password: Joi.string().min(0).required(),
+		age: Joi.string().required(),
+	});
+
+	return schema.validate(user);
+}
+
+export function validateGetUser(userInfo: { id: string; password: string }) {
+	const schema = Joi.object({
+		id: Joi.string().required(),
+		password: Joi.string().min(0).required(),
+	});
+
+	return schema.validate(userInfo);
+}

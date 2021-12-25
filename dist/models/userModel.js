@@ -39,10 +39,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUserPurchasedProducts = exports.findUserById = exports.findUser = exports.createUser = void 0;
+exports.validateGetUser = exports.validateRegisterUser = exports.updateUserPurchasedProducts = exports.findUserById = exports.findUser = exports.createUser = void 0;
 var db_1 = require("../startup/db");
 var uniqid_1 = __importDefault(require("uniqid"));
 var bcryptjs_1 = __importDefault(require("bcryptjs"));
+var joi_1 = __importDefault(require("joi"));
+// Database Queries
 var createUser = function (fName, lName, email, password, age, callback) { return __awaiter(void 0, void 0, void 0, function () {
     var salt, hashedPassword, decimalAge, id, sql;
     return __generator(this, function (_a) {
@@ -113,3 +115,23 @@ var updateUserPurchasedProducts = function (user, newPurchasedProducts, callback
     });
 };
 exports.updateUserPurchasedProducts = updateUserPurchasedProducts;
+// Validations
+function validateRegisterUser(user) {
+    var schema = joi_1.default.object({
+        first_name: joi_1.default.string().required(),
+        last_name: joi_1.default.string().required(),
+        email: joi_1.default.string().email().required(),
+        password: joi_1.default.string().min(0).required(),
+        age: joi_1.default.string().required(),
+    });
+    return schema.validate(user);
+}
+exports.validateRegisterUser = validateRegisterUser;
+function validateGetUser(userInfo) {
+    var schema = joi_1.default.object({
+        id: joi_1.default.string().required(),
+        password: joi_1.default.string().min(0).required(),
+    });
+    return schema.validate(userInfo);
+}
+exports.validateGetUser = validateGetUser;

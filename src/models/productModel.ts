@@ -1,5 +1,8 @@
 import { database } from '../startup/db';
 import uniqid from 'uniqid';
+import Joi from 'joi';
+
+// Types
 
 export interface IProduct {
 	id: string;
@@ -8,6 +11,8 @@ export interface IProduct {
 	price: number;
 	date: string;
 }
+
+// Database Queries
 
 export const addProduct = async (
 	name: string,
@@ -93,3 +98,29 @@ export const updateProductStock = (
 		callback();
 	});
 };
+
+// Validations
+
+export function validateCreateProduct(product: IProduct) {
+	const schema = Joi.object({
+		name: Joi.string().required(),
+		stock: Joi.number().min(0).required(),
+		price: Joi.number().min(0).required(),
+	});
+
+	return schema.validate(product);
+}
+
+export function validatePurchaseProduct(purchaseInfo: {
+	user: string;
+	product: string;
+	count: number;
+}) {
+	const schema = Joi.object({
+		user: Joi.string().required(),
+		product: Joi.string().required(),
+		count: Joi.number().min(0).required(),
+	});
+
+	return schema.validate(purchaseInfo);
+}

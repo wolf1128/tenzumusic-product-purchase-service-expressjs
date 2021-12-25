@@ -42,8 +42,11 @@ var userModel_1 = require("../models/userModel");
 // @route       POST /api/users
 // @access      Public
 var registerUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, first_name, last_name, email, password, age;
+    var error, _a, first_name, last_name, email, password, age;
     return __generator(this, function (_b) {
+        error = userModel_1.validateRegisterUser(req.body).error;
+        if (error)
+            return [2 /*return*/, res.status(400).send(error.details[0].message)];
         _a = req.body, first_name = _a.first_name, last_name = _a.last_name, email = _a.email, password = _a.password, age = _a.age;
         // Store in the databse
         userModel_1.createUser(first_name, last_name, email, password, age, function (result) {
@@ -57,8 +60,11 @@ exports.registerUser = registerUser;
 // @route       POST /api/users/info
 // @access      Public
 var getUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, id, password;
+    var error, _a, id, password;
     return __generator(this, function (_b) {
+        error = userModel_1.validateGetUser(req.body).error;
+        if (error)
+            return [2 /*return*/, res.status(400).send(error.details[0].message)];
         _a = req.body, id = _a.id, password = _a.password;
         userModel_1.findUser(id, password, function (result) {
             if (result instanceof Error) {
