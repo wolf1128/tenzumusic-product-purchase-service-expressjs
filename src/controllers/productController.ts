@@ -15,10 +15,14 @@ import {
 // @route       POST /api/products
 // @access      Public
 export const createProduct: RequestHandler = async (req, res) => {
-	const { Name, Stock, Price } = req.body;
+	const { name, stock, price } = req.body as {
+		name: string;
+		stock: number;
+		price: number;
+	};
 
-	// Store in the databse
-	addProduct(Name, Stock, Price, (result: any) => {
+	// Store in the databses
+	addProduct(name, stock, price, (result: any) => {
 		res.send(result);
 	});
 };
@@ -26,8 +30,10 @@ export const createProduct: RequestHandler = async (req, res) => {
 // @desc        Get product info
 // @route       GET /api/products/:id
 // @access      Public
-export const getProduct: RequestHandler = async (req, res) => {
-	findProduct(req.params.id, (result: any) => {
+export const getProduct: RequestHandler<{ id: string }> = async (req, res) => {
+	const productId = req.params.id;
+
+	findProduct(productId, (result: any) => {
 		res.send(result);
 	});
 };
@@ -64,46 +70,37 @@ export const purchaseProduct: RequestHandler = async (req, res) => {
 		product,
 		count,
 	}: { user: string; product: string; count: number } = req.body;
-	// let productInfo: {
-	// 	ID: string;
-	// 	Name: string;
-	// 	Stock: number;
-	// 	Price: number;
-	// 	Date: string;
-	// };
+
 	let totalPrice: number;
 
 	findProduct(product, (productInfo: any) => {
-		if (productInfo.Stock < count) {
+		if (productInfo.stock < count) {
 			res.status(500).send({
 				message_fa: 'متاسفیم!تعداد درخواست بیشتر از موجودی است!',
 				message_en: 'Sorry! Order count is greather than the stock!',
 			});
 		} else {
-			const newStock = productInfo.Stock - count;
-			totalPrice = productInfo.Price * count;
+			const newStock = productInfo.stock - count;
+			totalPrice = productInfo.price * count;
 			updateProductStock(product, newStock, (err: any) => {
 				// console.log('error: ', err);
 			});
 
 			findUserById(user, (foundUser: any) => {
-				let userProducts = !foundUser.Purchased_products
+				let userProducts = !foundUser.purchased_products
 					? null
-					: foundUser.Purchased_products;
+					: foundUser.purchased_products;
 
 				// Convert string to array (SQLite constraint) | ['1234', '567', '89']
 				let purchasedProducts = [];
 				if (userProducts) {
-					// purchasedProducts = Array.from(userProducts).filter( // xxx
-					// 	(p) => p !== ','
-					// );
 					purchasedProducts = userProducts
 						.split("'")
 						.filter((p: string) => p !== '[' && p !== ']' && p !== ', ');
 
-					purchasedProducts.push(productInfo.ID);
+					purchasedProducts.push(productInfo.id);
 				} else {
-					purchasedProducts = Array(productInfo.ID);
+					purchasedProducts = Array(productInfo.id);
 				}
 
 				// Convert back to string

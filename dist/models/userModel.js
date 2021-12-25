@@ -55,7 +55,7 @@ var createUser = function (fName, lName, email, password, age, callback) { retur
                 hashedPassword = _a.sent();
                 decimalAge = new Date().getFullYear() - new Date(age).getFullYear();
                 id = uniqid_1.default();
-                sql = "INSERT INTO USERS \n                    (ID, First_name, Last_name, Email, Password, Age, Purchased_products) \n                    VALUES ($id, $fName, $lName, $email, $password, $age, null)";
+                sql = "INSERT INTO USERS \n                    (id, first_name, last_name, email, password, age, purchased_products) \n                    VALUES ($id, $fName, $lName, $email, $password, $age, null)";
                 db_1.database.run(sql, [id, fName, lName, email, hashedPassword, decimalAge], function (error) {
                     if (error) {
                         callback(error.message);
@@ -70,15 +70,27 @@ var createUser = function (fName, lName, email, password, age, callback) { retur
 exports.createUser = createUser;
 var findUser = function (id, password, callback) {
     var sql = "SELECT * FROM USERS WHERE ID = $id";
-    // check passwords
-    // await bcrypt.compare(password)
-    db_1.database.get(sql, [id], function (error, row) {
-        if (error) {
-            callback(error.message);
-        }
-        row.Password = '****';
-        callback(row);
-    });
+    db_1.database.get(sql, [id], function (error, userRow) { return __awaiter(void 0, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (error) {
+                        callback(error.message);
+                    }
+                    return [4 /*yield*/, bcryptjs_1.default.compare(password, userRow.password)];
+                case 1:
+                    // check passwords
+                    if (_a.sent()) {
+                        userRow.password = '****';
+                        callback(userRow);
+                    }
+                    else {
+                        callback(new Error('Passwords are not match!'));
+                    }
+                    return [2 /*return*/];
+            }
+        });
+    }); });
 };
 exports.findUser = findUser;
 var findUserById = function (id, callback) {

@@ -3,22 +3,21 @@ import uniqid from 'uniqid';
 import bcrypt from 'bcryptjs';
 
 export interface IUser {
-	ID: string;
-	First_name: string;
-	Last_name: string;
-	Email: string;
-	Password: string;
-	Age: number;
-	Purchased_products: [string];
+	id: string;
+	first_name: string;
+	last_name: string;
+	email: string;
+	password: string;
+	age: number;
+	purchased_products: [string];
 }
-
 
 export const createUser = async (
 	fName: string,
 	lName: string,
 	email: string,
 	password: string,
-	age: number,
+	age: string,
 	callback: any
 ) => {
 	// Hash the password
@@ -32,7 +31,7 @@ export const createUser = async (
 	const id = uniqid();
 
 	const sql = `INSERT INTO USERS 
-                    (ID, First_name, Last_name, Email, Password, Age, Purchased_products) 
+                    (id, first_name, last_name, email, password, age, purchased_products) 
                     VALUES ($id, $fName, $lName, $email, $password, $age, null)`;
 	database.run(
 		sql,
@@ -50,15 +49,18 @@ export const createUser = async (
 export const findUser = (id: string, password: string, callback: any) => {
 	const sql = `SELECT * FROM USERS WHERE ID = $id`;
 
-	// check passwords
-	// await bcrypt.compare(password)
-
-	database.get(sql, [id], (error, row) => {
+	database.get(sql, [id], async (error: any, userRow: IUser) => {
 		if (error) {
 			callback(error.message);
 		}
-		row.Password = '****';
-		callback(row);
+
+		// check passwords
+		if (await bcrypt.compare(password, userRow.password)) {
+			userRow.password = '****';
+			callback(userRow);
+		} else {
+			callback(new Error('Passwords are not match!'));
+		}
 	});
 };
 

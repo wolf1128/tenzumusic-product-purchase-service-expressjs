@@ -2,11 +2,11 @@ import { database } from '../startup/db';
 import uniqid from 'uniqid';
 
 export interface IProduct {
-	ID: string;
-	Name: string;
-	Stock: number;
-	Price: number;
-	Date: string;
+	id: string;
+	name: string;
+	stock: number;
+	price: number;
+	date: string;
 }
 
 export const addProduct = async (
@@ -16,10 +16,10 @@ export const addProduct = async (
 	callback: any
 ) => {
 	const id = uniqid();
-	const date = new Date();
+	const date = new Date(); // We could use moment.js
 
 	const sql = `INSERT INTO PRODUCTS 
-                    (ID, name, stock, price, date) 
+                    (id, name, stock, price, date) 
                     VALUES ($id, $name, $stock, $price, $date)`;
 	database.run(sql, [id, name, stock, price, date], (error: any) => {
 		if (error) {
@@ -31,7 +31,7 @@ export const addProduct = async (
 };
 
 export const findProduct = (id: string, callback: any) => {
-	const sql = `SELECT * FROM PRODUCTS WHERE ID = $id`;
+	const sql = `SELECT * FROM PRODUCTS WHERE id = $id`;
 	database.get(sql, [id], (error, row) => {
 		if (error) {
 			callback(error.message);
@@ -47,35 +47,35 @@ export const findAllProductsAndFilter = (
 ) => {
 	if (minPrice & maxPrice) {
 		const sql = `SELECT * FROM PRODUCTS WHERE Price BETWEEN $minPrice AND $maxPrice`;
-		database.all(sql, [minPrice, maxPrice], (error, row) => {
+		database.all(sql, [minPrice, maxPrice], (error, products: IProduct[]) => {
 			if (error) {
 				callback(error.message);
 			}
-			callback(row);
+			callback(products);
 		});
 	} else if (minPrice) {
 		const sql = `SELECT * FROM PRODUCTS WHERE Price >= $minPrice`;
-		database.all(sql, [minPrice], (error, row) => {
+		database.all(sql, [minPrice], (error, products: IProduct[]) => {
 			if (error) {
 				callback(error.message);
 			}
-			callback(row);
+			callback(products);
 		});
 	} else if (maxPrice) {
 		const sql = `SELECT * FROM PRODUCTS WHERE Price <= $maxPrice`;
-		database.all(sql, [maxPrice], (error, row) => {
+		database.all(sql, [maxPrice], (error, products: IProduct[]) => {
 			if (error) {
 				callback(error.message);
 			}
-			callback(row);
+			callback(products);
 		});
 	} else {
 		const sql = `SELECT * FROM PRODUCTS`;
-		database.all(sql, [], (error, row) => {
+		database.all(sql, [], (error, products: IProduct[]) => {
 			if (error) {
 				callback(error.message);
 			}
-			callback(row);
+			callback(products);
 		});
 	}
 };

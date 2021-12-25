@@ -6,7 +6,7 @@ const sqlite = sqlite3.verbose();
 const db_path = path.join(
 	__dirname,
 	'../database',
-	'tenzumusic-product-purchase-service-database.sqlite'
+	'tenzumusic-product-purchase-service-db.sqlite'
 );
 export const database = new sqlite3.Database(
 	db_path,

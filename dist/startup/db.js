@@ -8,7 +8,7 @@ var sqlite3_1 = __importDefault(require("sqlite3"));
 var path_1 = __importDefault(require("path"));
 // Initialize Connection
 var sqlite = sqlite3_1.default.verbose();
-var db_path = path_1.default.join(__dirname, '../database', 'tenzumusic-product-purchase-service-database.sqlite');
+var db_path = path_1.default.join(__dirname, '../database', 'tenzumusic-product-purchase-service-db.sqlite');
 exports.database = new sqlite3_1.default.Database(db_path, sqlite.OPEN_READWRITE, function (err) {
     if (err) {
         console.log(err.message);

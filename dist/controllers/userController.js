@@ -42,11 +42,11 @@ var userModel_1 = require("../models/userModel");
 // @route       POST /api/users
 // @access      Public
 var registerUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, First_name, Last_name, Email, Password, Age;
+    var _a, first_name, last_name, email, password, age;
     return __generator(this, function (_b) {
-        _a = req.body, First_name = _a.First_name, Last_name = _a.Last_name, Email = _a.Email, Password = _a.Password, Age = _a.Age;
+        _a = req.body, first_name = _a.first_name, last_name = _a.last_name, email = _a.email, password = _a.password, age = _a.age;
         // Store in the databse
-        userModel_1.createUser(First_name, Last_name, Email, Password, Age, function (result) {
+        userModel_1.createUser(first_name, last_name, email, password, age, function (result) {
             res.send(result);
         });
         return [2 /*return*/];
@@ -57,10 +57,13 @@ exports.registerUser = registerUser;
 // @route       POST /api/users/info
 // @access      Public
 var getUser = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, ID, Password;
+    var _a, id, password;
     return __generator(this, function (_b) {
-        _a = req.body, ID = _a.ID, Password = _a.Password;
-        userModel_1.findUser(ID, Password, function (result) {
+        _a = req.body, id = _a.id, password = _a.password;
+        userModel_1.findUser(id, password, function (result) {
+            if (result instanceof Error) {
+                res.status(404).send(result.message);
+            }
             res.send(result);
         });
         return [2 /*return*/];

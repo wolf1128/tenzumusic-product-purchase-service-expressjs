@@ -5,10 +5,16 @@ import { createUser, findUser } from '../models/userModel';
 // @route       POST /api/users
 // @access      Public
 export const registerUser: RequestHandler = async (req, res) => {
-	const { First_name, Last_name, Email, Password, Age } = req.body; // Receive age in YYYY-MM-DD format
+	const { first_name, last_name, email, password, age } = req.body as {
+		first_name: string;
+		last_name: string;
+		email: string;
+		password: string;
+		age: string;
+	}; // Receive age in YYYY-MM-DD format
 
 	// Store in the databse
-	createUser(First_name, Last_name, Email, Password, Age, (result: any) => {
+	createUser(first_name, last_name, email, password, age, (result: any) => {
 		res.send(result);
 	});
 };
@@ -17,9 +23,12 @@ export const registerUser: RequestHandler = async (req, res) => {
 // @route       POST /api/users/info
 // @access      Public
 export const getUser: RequestHandler = async (req, res) => {
-	const { ID, Password } = req.body;
+	const { id, password } = req.body as { id: string; password: string };
 
-	findUser(ID, Password, (result: any) => {
+	findUser(id, password, (result: any) => {
+		if (result instanceof Error) {
+			res.status(404).send(result.message);
+		}
 		res.send(result);
 	});
 };

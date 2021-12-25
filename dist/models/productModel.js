@@ -47,7 +47,7 @@ var addProduct = function (name, stock, price, callback) { return __awaiter(void
     return __generator(this, function (_a) {
         id = uniqid_1.default();
         date = new Date();
-        sql = "INSERT INTO PRODUCTS \n                    (ID, name, stock, price, date) \n                    VALUES ($id, $name, $stock, $price, $date)";
+        sql = "INSERT INTO PRODUCTS \n                    (id, name, stock, price, date) \n                    VALUES ($id, $name, $stock, $price, $date)";
         db_1.database.run(sql, [id, name, stock, price, date], function (error) {
             if (error) {
                 callback(error.message);
@@ -60,7 +60,7 @@ var addProduct = function (name, stock, price, callback) { return __awaiter(void
 }); };
 exports.addProduct = addProduct;
 var findProduct = function (id, callback) {
-    var sql = "SELECT * FROM PRODUCTS WHERE ID = $id";
+    var sql = "SELECT * FROM PRODUCTS WHERE id = $id";
     db_1.database.get(sql, [id], function (error, row) {
         if (error) {
             callback(error.message);
@@ -72,38 +72,38 @@ exports.findProduct = findProduct;
 var findAllProductsAndFilter = function (minPrice, maxPrice, callback) {
     if (minPrice & maxPrice) {
         var sql = "SELECT * FROM PRODUCTS WHERE Price BETWEEN $minPrice AND $maxPrice";
-        db_1.database.all(sql, [minPrice, maxPrice], function (error, row) {
+        db_1.database.all(sql, [minPrice, maxPrice], function (error, products) {
             if (error) {
                 callback(error.message);
             }
-            callback(row);
+            callback(products);
         });
     }
     else if (minPrice) {
         var sql = "SELECT * FROM PRODUCTS WHERE Price >= $minPrice";
-        db_1.database.all(sql, [minPrice], function (error, row) {
+        db_1.database.all(sql, [minPrice], function (error, products) {
             if (error) {
                 callback(error.message);
             }
-            callback(row);
+            callback(products);
         });
     }
     else if (maxPrice) {
         var sql = "SELECT * FROM PRODUCTS WHERE Price <= $maxPrice";
-        db_1.database.all(sql, [maxPrice], function (error, row) {
+        db_1.database.all(sql, [maxPrice], function (error, products) {
             if (error) {
                 callback(error.message);
             }
-            callback(row);
+            callback(products);
         });
     }
     else {
         var sql = "SELECT * FROM PRODUCTS";
-        db_1.database.all(sql, [], function (error, row) {
+        db_1.database.all(sql, [], function (error, products) {
             if (error) {
                 callback(error.message);
             }
-            callback(row);
+            callback(products);
         });
     }
 };

@@ -43,11 +43,11 @@ var userModel_1 = require("../models/userModel");
 // @route       POST /api/products
 // @access      Public
 var createProduct = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, Name, Stock, Price;
+    var _a, name, stock, price;
     return __generator(this, function (_b) {
-        _a = req.body, Name = _a.Name, Stock = _a.Stock, Price = _a.Price;
-        // Store in the databse
-        productModel_1.addProduct(Name, Stock, Price, function (result) {
+        _a = req.body, name = _a.name, stock = _a.stock, price = _a.price;
+        // Store in the databses
+        productModel_1.addProduct(name, stock, price, function (result) {
             res.send(result);
         });
         return [2 /*return*/];
@@ -58,8 +58,10 @@ exports.createProduct = createProduct;
 // @route       GET /api/products/:id
 // @access      Public
 var getProduct = function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var productId;
     return __generator(this, function (_a) {
-        productModel_1.findProduct(req.params.id, function (result) {
+        productId = req.params.id;
+        productModel_1.findProduct(productId, function (result) {
             res.send(result);
         });
         return [2 /*return*/];
@@ -88,35 +90,32 @@ var purchaseProduct = function (req, res) { return __awaiter(void 0, void 0, voi
     return __generator(this, function (_b) {
         _a = req.body, user = _a.user, product = _a.product, count = _a.count;
         productModel_1.findProduct(product, function (productInfo) {
-            if (productInfo.Stock < count) {
+            if (productInfo.stock < count) {
                 res.status(500).send({
                     message_fa: 'متاسفیم!تعداد درخواست بیشتر از موجودی است!',
                     message_en: 'Sorry! Order count is greather than the stock!',
                 });
             }
             else {
-                var newStock = productInfo.Stock - count;
-                totalPrice = productInfo.Price * count;
+                var newStock = productInfo.stock - count;
+                totalPrice = productInfo.price * count;
                 productModel_1.updateProductStock(product, newStock, function (err) {
                     // console.log('error: ', err);
                 });
                 userModel_1.findUserById(user, function (foundUser) {
-                    var userProducts = !foundUser.Purchased_products
+                    var userProducts = !foundUser.purchased_products
                         ? null
-                        : foundUser.Purchased_products;
+                        : foundUser.purchased_products;
                     // Convert string to array (SQLite constraint) | ['1234', '567', '89']
                     var purchasedProducts = [];
                     if (userProducts) {
-                        // purchasedProducts = Array.from(userProducts).filter( // xxx
-                        // 	(p) => p !== ','
-                        // );
                         purchasedProducts = userProducts
                             .split("'")
                             .filter(function (p) { return p !== '[' && p !== ']' && p !== ', '; });
-                        purchasedProducts.push(productInfo.ID);
+                        purchasedProducts.push(productInfo.id);
                     }
                     else {
-                        purchasedProducts = Array(productInfo.ID);
+                        purchasedProducts = Array(productInfo.id);
                     }
                     // Convert back to string
                     var updatedPurchasedProducts = purchasedProducts.toString();
