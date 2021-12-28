@@ -12,7 +12,8 @@ export interface IUser {
 	email: string;
 	password: string;
 	age: number;
-	purchased_products: [string];
+	// purchased_products: [string];
+	purchased_products: string;
 }
 
 // Database Queries

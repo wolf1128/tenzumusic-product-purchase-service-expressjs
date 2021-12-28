@@ -2,6 +2,7 @@ import { RequestHandler } from 'express';
 import {
 	createUser,
 	findUser,
+	IUser,
 	validateGetUser,
 	validateRegisterUser,
 } from '../models/userModel';
@@ -22,8 +23,8 @@ export const registerUser: RequestHandler = async (req, res) => {
 	}; // Receive age in YYYY-MM-DD format
 
 	// Store in the databse
-	createUser(first_name, last_name, email, password, age, (result: any) => {
-		res.send(result);
+	createUser(first_name, last_name, email, password, age, (result: IUser) => {
+		res.status(201).send(result);
 	});
 };
 
@@ -36,7 +37,7 @@ export const getUser: RequestHandler = async (req, res) => {
 
 	const { id, password } = req.body as { id: string; password: string };
 
-	findUser(id, password, (result: any) => {
+	findUser(id, password, (result: IUser) => {
 		if (result instanceof Error) {
 			res.status(404).send(result.message);
 		}

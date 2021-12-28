@@ -3,13 +3,14 @@ import {
 	addProduct,
 	findAllProductsAndFilter,
 	findProduct,
+	IProduct,
 	updateProductStock,
 	validateCreateProduct,
 	validatePurchaseProduct,
 } from '../models/productModel';
 import {
-	findUser,
 	findUserById,
+	IUser,
 	updateUserPurchasedProducts,
 } from '../models/userModel';
 
@@ -27,8 +28,8 @@ export const createProduct: RequestHandler = async (req, res) => {
 	};
 
 	// Store in the databses
-	addProduct(name, stock, price, (result: any) => {
-		res.send(result);
+	addProduct(name, stock, price, (result: IProduct) => {
+		res.status(201).send(result);
 	});
 };
 
@@ -38,7 +39,7 @@ export const createProduct: RequestHandler = async (req, res) => {
 export const getProduct: RequestHandler<{ id: string }> = async (req, res) => {
 	const productId = req.params.id;
 
-	findProduct(productId, (result: any) => {
+	findProduct(productId, (result: IProduct) => {
 		res.send(result);
 	});
 };
@@ -60,7 +61,7 @@ export const getProducts: RequestHandler<
 	findAllProductsAndFilter(
 		parseInt(minPrice),
 		parseInt(maxPrice),
-		(result: any) => {
+		(result: IProduct[]) => {
 			res.send(result);
 		}
 	);
@@ -81,7 +82,7 @@ export const purchaseProduct: RequestHandler = async (req, res) => {
 
 	let totalPrice: number;
 
-	findProduct(product, (productInfo: any) => {
+	findProduct(product, (productInfo: IProduct) => {
 		if (productInfo.stock < count) {
 			res.status(500).send({
 				message_fa: 'متاسفیم!تعداد درخواست بیشتر از موجودی است!',
@@ -90,11 +91,11 @@ export const purchaseProduct: RequestHandler = async (req, res) => {
 		} else {
 			const newStock = productInfo.stock - count;
 			totalPrice = productInfo.price * count;
-			updateProductStock(product, newStock, (err: any) => {
+			updateProductStock(product, newStock, (err: unknown) => {
 				// console.log('error: ', err);
 			});
 
-			findUserById(user, (foundUser: any) => {
+			findUserById(user, (foundUser: IUser) => {
 				let userProducts = !foundUser.purchased_products
 					? null
 					: foundUser.purchased_products;
